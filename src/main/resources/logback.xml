@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="Milad" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+        <Pattern> %d{yyyy-MM-dd HH:mm:ss} %-6level %logger{55} - %msg%n messageInfoMilad=%X{messageInfoMilad} - %x{messageInfoMilad}</Pattern>
+        </layout>
+
+    </appender>
+
+    <root level="info">
+<appender-ref ref="Milad"/>
+    </root>
+</configuration>
