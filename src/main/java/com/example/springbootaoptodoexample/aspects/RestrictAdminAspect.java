@@ -1,10 +1,12 @@
 package com.example.springbootaoptodoexample.aspects;
 
 
+import com.example.springbootaoptodoexample.configuration.ForbiddenException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -15,6 +17,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Slf4j
 public class RestrictAdminAspect {
 
+    @Before("@annotation(com.example.springbootaoptodoexample.aspects.Restrict) && execution(public * * (..))")
     public void restrictAdminBeforeLogin(final JoinPoint joinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Restrict restrict = methodSignature.getMethod().getAnnotation(Restrict.class);

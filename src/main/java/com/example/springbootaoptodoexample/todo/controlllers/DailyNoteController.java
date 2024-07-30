@@ -2,6 +2,7 @@ package com.example.springbootaoptodoexample.todo.controlllers;
 
 
 import com.example.springbootaoptodoexample.aspects.Restrict;
+import com.example.springbootaoptodoexample.todo.domain.DailyNote;
 import com.example.springbootaoptodoexample.todo.domain.DailyNoteList;
 import com.example.springbootaoptodoexample.todo.dto.TotalDailyNoteList;
 import com.example.springbootaoptodoexample.todo.repo.DailyNoteRepositoryImpl;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -30,7 +32,8 @@ private final DailyNoteRepositoryImpl repository;
     @RequestMapping(value = "/me",method = RequestMethod.GET,produces = "application/json")
     public Callable<TotalDailyNoteList> getUsersDailyNoteList(@RequestHeader("user-id") final UUID userId){
 log.info("GET all daily notes for user {}",userId);
-return ()-> new TotalDailyNoteList(repository.getDailyNote(userId));
+        return ()-> new TotalDailyNoteList(repository.getDailyNote(userId));
+//return ()-> new TotalDailyNoteList(repository.getDailyNote(userId));
     }
 
 
@@ -86,6 +89,65 @@ return ()-> new TotalDailyNoteList(repository.getDailyNote(userId));
             return ResponseEntity.accepted().build();
         };
     }
+
+
+    // new methods added to controller for additional functionalities
+
+    //region newMethods
+
+    @RequestMapping(value = "/me", method = RequestMethod.PUT)
+    public Callable<ResponseEntity<?>> updateDailyNoteList(
+            @RequestHeader("user-id") final UUID userId,@RequestBody DailyNoteList dailyNoteList
+    ){
+        return ()-> {
+            repository.updateDailyNoteList(userId, dailyNoteList);
+            return ResponseEntity.ok().build();
+        };
+    }
+
+    @RequestMapping(value = "/me/status",method = RequestMethod.GET,produces = "application/json")
+    public Callable<List<DailyNoteList>> getDailyNotesByStatus(
+            @RequestHeader("user-id") final UUID userId,
+            @RequestParam(value = "status") final String status
+    ){
+        return ()-> repository.getDailyNotesByStatus(userId, status);
+    }
+
+    @RequestMapping(value = "/me/priority", method = RequestMethod.GET, produces = "application/json")
+    public Callable<List<DailyNoteList>> getDailyNotesByPriority
+            (@RequestHeader("user-id") final UUID userId, @RequestParam("priority") final String priority) {
+        return () -> repository.getDailyNotesByPriority(userId, priority);
+    }
+
+    @RequestMapping(value = "/me/tags", method = RequestMethod.GET, produces = "application/json")
+    public Callable<List<DailyNoteList>> searchDailyNotesByTags
+            (@RequestHeader("user-id") final UUID userId, @RequestParam("tags") final List<String> tags) {
+        return () -> repository.searchDailyNotesByTags(userId, tags);
+    }
+
+    @RequestMapping(value = "/me/{note}/add", method = RequestMethod.POST)
+    public Callable<ResponseEntity<Void>> addNoteToExistingList
+            (@RequestHeader("user-id") final UUID userId,
+             @PathVariable("note") final String todoList, @RequestBody DailyNote dailyNote) {
+        return () -> {
+            repository.addNoteToExistingList(userId, todoList, dailyNote);
+            return ResponseEntity.accepted().build();
+        };
+    }
+
+    @RequestMapping(value = "/me/{note}/update", method = RequestMethod.PUT)
+    public Callable<ResponseEntity<Void>> updateNoteInList
+            (@RequestHeader("user-id") final UUID userId,
+             @PathVariable("note") final String todoList, @RequestBody DailyNote dailyNote) {
+        return () -> {
+            repository.updateNoteInList(userId, todoList, dailyNote);
+            return ResponseEntity.ok().build();
+        };
+    }
+
+    //endregion
+
+
 
 
 

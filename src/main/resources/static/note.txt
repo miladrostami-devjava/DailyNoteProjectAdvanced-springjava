@@ -1,0 +1,168 @@
+/*
+*    @Test
+    void getUsersDailyNoteList() throws Exception {
+        TotalDailyNoteList totalDailyNoteList = new TotalDailyNoteList(Arrays.asList(dailyNoteList));
+        when(repository.getDailyNote(any(UUID.class))).thenReturn(Arrays.asList(dailyNoteList));
+
+        mockMvc.perform(get("/dailynote/me")
+                .header("user-id", userId)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.dailyNotes", hasSize(1)))
+                .andExpect(jsonPath("$.dailyNotes[0].name", is(dailyNoteList.getName())));
+
+        verify(repository, times(1)).getDailyNote(userId);
+    }
+
+    @Test
+    void getUserDailyNoteList() throws Exception {
+        when(repository.getDailyNote(any(UUID.class), anyString())).thenReturn(Optional.of(dailyNoteList));
+
+        mockMvc.perform(get("/dailynote/me/Test List")
+                .header("user-id", userId)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is(dailyNoteList.getName())));
+
+        verify(repository, times(1)).getDailyNote(userId, "Test List");
+    }
+
+    @Test
+    void deleteUserDailyNoteList() throws Exception {
+        doNothing().when(repository).deleteDailyNote(userId);
+
+        mockMvc.perform(delete("/dailynote/me")
+                .header("user-id", userId))
+                .andExpect(status().isAccepted());
+
+        verify(repository, times(1)).deleteDailyNote(userId);
+    }
+
+    @Test
+    void deleteUserDailyNote() throws Exception {
+        doNothing().when(repository).deleteDailyNote=userId;
+
+        mockMvc.perform(delete("/dailynote/me/Test Note")
+                .header("user-id", userId))
+                .andExpect(status().isAccepted());
+
+        verify(repository, times(1)).deleteDailyNote=userId, "Test Note");
+    }
+
+    @Test
+    void getUUID() throws Exception {
+        mockMvc.perform(get("/dailynote/uuid"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(matchesPattern("[0-9a-fA-F-]{36}")));
+    }
+
+    @Test
+    void createDailyNote() throws Exception {
+        doNothing().when(repository).addDailyNote=userId, dailyNoteList;
+
+        mockMvc.perform(post("/dailynote/me")
+                .header("user-id", userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Test List\"}"))
+                .andExpect(status().isAccepted());
+
+        verify(repository, times(1)).addDailyNote=userId, any(DailyNoteList.class));
+    }
+
+    @Test
+    void deleteUsersTotalDailyNotes() throws Exception {
+        doNothing().when(repository).deleteAllDailyNoteList();
+
+        mockMvc.perform(delete("/dailynote")
+                .header("user-id", userId))
+                .andExpect(status().isAccepted());
+
+        verify(repository, times(1)).deleteAllDailyNoteList();
+    }
+
+    @Test
+    void updateDailyNoteList() throws Exception {
+        doNothing().when(repository).updateDailyNoteList=userId, dailyNoteList;
+
+        mockMvc.perform(put("/dailynote/me")
+                .header("user-id", userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Updated List\"}"))
+                .andExpect(status().isOk());
+
+        verify(repository, times(1)).updateDailyNoteList=userId, any(DailyNoteList.class));
+    }
+
+    @Test
+    void getDailyNotesByStatus() throws Exception {
+        when(repository.getDailyNotesByStatus(any(UUID.class), anyString())).thenReturn(Arrays.asList(dailyNoteList));
+
+        mockMvc.perform(get("/dailynote/me/status")
+                .header("user-id", userId)
+                .param("status", "completed")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name", is(dailyNoteList.getName())));
+
+        verify(repository, times(1)).getDailyNotesByStatus(userId, "completed");
+    }
+
+    @Test
+    void getDailyNotesByPriority() throws Exception {
+        when(repository.getDailyNotesByPriority(any(UUID.class), anyString())).thenReturn(Arrays.asList(dailyNoteList));
+
+        mockMvc.perform(get("/dailynote/me/priority")
+                .header("user-id", userId)
+                .param("priority", "high")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name", is(dailyNoteList.getName())));
+
+        verify(repository, times(1)).getDailyNotesByPriority(userId, "high");
+    }
+
+    @Test
+    void searchDailyNotesByTags() throws Exception {
+        when(repository.searchDailyNotesByTags(any(UUID.class), anyList())).thenReturn(Arrays.asList(dailyNoteList));
+
+        mockMvc.perform(get("/dailynote/me/tags")
+                .header("user-id", userId)
+                .param("tags", "work")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name", is(dailyNoteList.getName())));
+
+        verify(repository, times(1)).searchDailyNotesByTags(userId, Arrays.asList("work"));
+    }
+
+    @Test
+    void addNoteToExistingList() throws Exception {
+        doNothing().when(repository).addNoteToExistingList=userId, "Test List", dailyNote;
+
+        mockMvc.perform(post("/dailynote/me/Test List/add")
+                .header("user-id", userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"Test Note\"}"))
+                .andExpect(status().isAccepted());
+
+        verify(repository, times(1)).addNoteToExistingList=userId, eq("Test List"), any(DailyNote.class));
+    }
+
+    @Test
+    void updateNoteInList() throws Exception {
+        doNothing().when(repository).updateNoteInList=userId, "Test List", dailyNote;
+
+        mockMvc.perform(put("/dailynote/me/Test List/update")
+                .header("user-id", userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"Updated Note\"}"))
+                .andExpect(status().isOk());
+
+        verify(repository, times(1)).updateNoteInList=userId, eq("Test List"), any(DailyNote.class));
+    }
+}
+*
+* */

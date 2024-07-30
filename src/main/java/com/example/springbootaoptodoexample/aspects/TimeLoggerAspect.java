@@ -17,9 +17,7 @@ public class TimeLoggerAspect {
         Object value;
         try {
             value = proceedingJoinPoint.proceed();
-        }catch (Throwable throwable){
-            throw  throwable;
-        }finally {
+        } finally {
             Long duration = System.currentTimeMillis() - startTime;
             log.info("{} . {} took {} ms",
                     proceedingJoinPoint.getSignature().getDeclaringType().getSimpleName(),
