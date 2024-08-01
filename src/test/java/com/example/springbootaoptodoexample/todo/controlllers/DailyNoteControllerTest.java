@@ -62,20 +62,7 @@ class DailyNoteControllerTest {
 reset(repository);
     }
 
-    /* @Test
-    void getUsersDailyNoteList() throws Exception {
-        TotalDailyNoteList totalDailyNoteList = new TotalDailyNoteList(Arrays.asList(dailyNoteList));
-        when(repository.getDailyNote(any(UUID.class))).thenReturn(Arrays.asList(dailyNoteList));
 
-        mockMvc.perform(get("/dailynote/me")
-                .header("user-id", userId)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.dailyNotes", hasSize(1)))
-                .andExpect(jsonPath("$.dailyNotes[0].name", is(dailyNoteList.getName())));
-
-        verify(repository, times(1)).getDailyNote(userId);
-    }*/
 
     @Test
     void getUsersDailyNoteList() throws Exception{
