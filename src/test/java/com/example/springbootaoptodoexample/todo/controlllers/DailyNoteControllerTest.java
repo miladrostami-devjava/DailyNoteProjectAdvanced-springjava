@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -79,18 +81,17 @@ reset(repository);
     void getUsersDailyNoteList() throws Exception{
         TotalDailyNoteList totalDailyNoteList = new TotalDailyNoteList(Collections.singletonList(dailyNoteList));
         when(repository.getDailyNote(any(UUID.class))).thenReturn(Collections.singletonList(dailyNoteList));
-      mockMvc.perform((RequestBuilder) get("/dailynote/")
-              .accept(MediaType.APPLICATION_JSON)
-        /*      .andExpect(status().isOk())
-              .andExpect(jsonPath("$.dailyNotes", hasSize(1)))
-              .andExpect(jsonPath("$.dailyNotes[0].name", is(dailyNoteList.getName()))*/
-              );
-
-
+      mockMvc.perform(get("/dailynote/")
+              .accept(MediaType.APPLICATION_JSON))
+              .andExpect(status().isOk())
+              .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+              .andExpect(jsonPath("$.dailyNotes.size()",hasSize(2)))
+              .andExpect(jsonPath("$.dailyNotes[0].name",is(dailyNoteList.getListName())));
+      verify(repository,times(1)).getDailyNote(userId);
     }
 
     @Test
-    void getUserDailyNoteList() {
+    void getUserDailyNoteList() throws InstantiationException, IllegalAccessException {
     }
 
     @Test
